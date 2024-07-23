@@ -40,10 +40,17 @@ export default function List() {
         </thead>
         <tbody>
           {books.map((book) => {
+            const { isbn, author, title, fav } = book
+
             return (
               <Item
-                key={book.isbn}
-                book={book}
+                // key要加入map裡面的回調函式
+                key={isbn}
+                // book={book}
+                isbn={isbn}
+                author={author}
+                title={title}
+                fav={fav}
                 handleToggleFav={handleToggleFav}
               />
             )
