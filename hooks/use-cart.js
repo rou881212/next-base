@@ -1,10 +1,14 @@
-import { createContext, useState, useContext } from 'react'
+import { createContext, useState, useContext, useEffect } from 'react'
+// import { useRouter } from 'next/router'
 
 // 1. 建立context
 const CartContext = createContext(null)
 
 // 2. 建立CartProvider元件
 export function CartProvider({ children }) {
+  // const router = useRouter()
+  const [didMount, setDidMount] = useState(false)
+
   // 加入到購物車的項目，和原本的商品物件值相比多了一個qty(數量)屬性
   const [cartItems, setCartItems] = useState([])
 
@@ -87,6 +91,24 @@ export function CartProvider({ children }) {
   // 計算總金額與數量(使用陣列reduce迭代方法)
   const totalQty = cartItems.reduce((acc, v) => acc + v.qty, 0)
   const totalPrice = cartItems.reduce((acc, v) => acc + v.qty * v.price, 0)
+
+  // 初次渲染的時間點，從localstorage讀出資料設定到狀態中
+  useEffect(() => {
+    setDidMount(true)
+    // 保護語法，避免掉ssr重覆渲染的情況
+    if (typeof window !== 'undefined') {
+      setCartItems(JSON.parse(localStorage.getItem('cart')) || [])
+    }
+  }, [])
+
+  // 購物車資料有更動(新增、刪除、修改)時，寫入localstorage
+  useEffect(() => {
+    if (didMount) {
+      localStorage.setItem('cart', JSON.stringify(cartItems))
+    }
+
+    console.log(`save ${cartItems.length} to localstorage`)
+  }, [cartItems, didMount])
 
   return (
     <CartContext.Provider
