@@ -6,8 +6,8 @@ export default function RefsDemo() {
   return (
     <>
       <h1>Refs展示範例</h1>
-      <InputId />
-      <InputId />
+      <InputRef />
+      <InputRef />
     </>
   )
 }
